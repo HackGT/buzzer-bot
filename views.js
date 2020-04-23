@@ -924,7 +924,6 @@ const modalJsonBlocks = (selected_platforms) => {
         }
     });
     for (let p in selected_platforms) {
-        console.log(selected_platforms[p].value)
         if (selected_platforms[p].value == "live_site") {
             blocks.push({
                 "type": "divider",
@@ -1048,13 +1047,15 @@ const modalJsonBlocks = (selected_platforms) => {
                 "type": "input",
                 "block_id": "slack",
                 "element": {
-                    "type": "multi_channels_select",
+                    // "type": "multi_channels_select",
+                    "type": "plain_text_input",
                     "action_id": "slack_channels",
                     "placeholder": {
                         "type": "plain_text",
-                        "text": "Select channels",
+                        "text": "Enter Channel",
                         "emoji": true
-                    }
+                    },
+                    "initial_value": "announcements"
                 },
                 "label": {
                     "type": "plain_text",

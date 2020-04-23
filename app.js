@@ -16,6 +16,9 @@ const web = new WebClient(process.env.SLACK_BOT_TOKEN);
 const slackEvents = createEventAdapter(process.env.SLACK_SIGNING_SECRET);
 const slackInteractions = createMessageAdapter(process.env.SLACK_SIGNING_SECRET);
 
+const app = express();
+const PORT = 80;
+
 async function makeCMSRequest(query, variables = {}, token = "") {
     headers = {
         "Content-Type": `application/json`,
@@ -32,29 +35,34 @@ async function makeCMSRequest(query, variables = {}, token = "") {
             variables: variables
         })
     })
-
     return res;
 }
 
 async function makeRequest(message, clientSchemaJson, adminkey) {
-    console.log("message: " + message);
-    console.log(clientSchemaJson);
-    const res = await fetch('/graphql', {
-            method: 'POST',
-            headers: {
-                'Content-Type': `application/json`,
-                'Accept'      : `application/json`,
-                'Authorization': 'Basic ' + adminkey
-            },
-            body: JSON.stringify({
-                query: queryMessage,
-                variables: {
-                    "message": message,
-                    "plugins": clientSchemaJson
-                }
-            })
+    ret = failureJson()
+    const res = await fetch(process.env.BUZZER_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': `application/json`,
+            'Accept'      : `application/json`,
+            'Authorization': 'Basic ' + adminkey
+        },
+        body: JSON.stringify({
+            query: queryMessage,
+            variables: {
+                "message": message,
+                "plugins": clientSchemaJson
+            }
+        })
+    }).then(function(res) {
+        if (res.status == 200) {
+            console.log("Buzzer Success")
+            ret = successJson();
+        } else {
+            console.log("Buzzer Failure")
+        }
     })
-    return res;
+    return ret;
 }
 
 // Slack will not display options data if text or value is greater than 75 characters so it must be shortened
@@ -67,9 +75,6 @@ String.prototype.capitalize = String.prototype.capitalize ||
     function () {
         return this.charAt(0).toUpperCase() + this.slice(1);
     };
-
-const app = express();
-const PORT = 80;
 
 app.use(morgan(function (tokens, req, res) {
     var status = tokens.status(req, res)
@@ -126,16 +131,14 @@ slackInteractions.viewSubmission('buzzer_submit', async (payload) => {
     console.log('Buzzer notification(s) created');
     clients = getClients(payload.view.blocks);
     values = payload.view.state.values;
-    clientSchemaJson = generateSchema(clients, values);
-    const res = await makeRequest(values.none1.message.value, clientSchemaJson, process.env.ADMIN_KEY);
- 
-    if (res.status == 200) {
-        console.log("Buzzer success");
-        return successJson();
-    } else {
-        console.log("Buzzer failed");
-        return failureJson();
-    }
+    let clientSchema = generateSchema(clients, values);
+    let clientSchemaJson = {}
+    clientSchema.map(client => {
+        let index = Object.keys(client)[0];
+        clientSchemaJson[index] = client[index];
+    })
+    const ret = await makeRequest(values.none1.message.value, clientSchemaJson, process.env.ADMIN_KEY_SECRET);
+    return ret;
 })
 
 function generateSchema(clients, values) {
@@ -185,7 +188,7 @@ function generateSchema(clients, values) {
             schema.push(
                 {
                     "slack": {
-                        "channels": values.slack.slack_channels.selected_channels,
+                        "channels": values.slack.slack_channels.value.split(','),
                         "at_channel": at_channel,
                         "at_here": at_here
                     }
