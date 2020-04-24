@@ -819,14 +819,6 @@ const homeJsonBlocks = () => {
                     {
                         "text": {
                             "type": "plain_text",
-                            "text": "Twilio",
-                            "emoji": true
-                        },
-                        "value": "twilio"
-                    },
-                    {
-                        "text": {
-                            "type": "plain_text",
                             "text": "Slack",
                             "emoji": true
                         },
@@ -954,23 +946,23 @@ const modalJsonBlocks = (selected_platforms) => {
                     "emoji": true
                 }
             });
-            blocks.push({
-                "type": "input",
-                "block_id": "none4",
-                "element": {
-                    "type": "plain_text_input",
-                    "action_id": "live_site_icon",
-                    "placeholder": {
-                        "type": "plain_text",
-                        "text": "Insert Icon"
-                    }
-                },
-                "label": {
-                    "type": "plain_text",
-                    "text": "Icon",
-                    "emoji": true
-                }
-            });
+            // blocks.push({
+            //     "type": "input",
+            //     "block_id": "none4",
+            //     "element": {
+            //         "type": "plain_text_input",
+            //         "action_id": "live_site_icon",
+            //         "placeholder": {
+            //             "type": "plain_text",
+            //             "text": "Insert Icon"
+            //         }
+            //     },
+            //     "label": {
+            //         "type": "plain_text",
+            //         "text": "Icon",
+            //         "emoji": true
+            //     }
+            // });
         }
         if (selected_platforms[p].value == "twitter") {
             blocks.push({
@@ -980,54 +972,6 @@ const modalJsonBlocks = (selected_platforms) => {
 				    "type": "mrkdwn",
 				    "text": " "
 			    }
-            });
-        }
-        if (selected_platforms[p].value == "twilio") {
-            blocks.push({
-                "type": "divider",
-                "block_id": "none5"
-            });
-            blocks.push({
-                "type": "section",
-                "block_id": "none6",
-			    "text": {
-				    "type": "mrkdwn",
-				    "text": "*Twilio*"
-			    }
-            });
-            blocks.push({
-                "type": "input",
-                "block_id": "twilio",
-                "element": {
-                    "type": "plain_text_input",
-                    "action_id": "twilio_numbers",
-                    "placeholder": {
-                        "type": "plain_text",
-                        "text": "Input Numbers"
-                    }
-                },
-                "label": {
-                    "type": "plain_text",
-                    "text": "Numbers",
-                    "emoji": true
-                }
-            });
-            blocks.push({
-                "type": "input",
-                "block_id": "none7",
-                "element": {
-                    "type": "plain_text_input",
-                    "action_id": "twilio_groups",
-                    "placeholder": {
-                        "type": "plain_text",
-                        "text": "Input Groups"
-                    }
-                },
-                "label": {
-                    "type": "plain_text",
-                    "text": "Groups",
-                    "emoji": true
-                }
             });
         }
         if (selected_platforms[p].value == "slack") {
@@ -1047,21 +991,27 @@ const modalJsonBlocks = (selected_platforms) => {
                 "type": "input",
                 "block_id": "slack",
                 "element": {
-                    // "type": "multi_channels_select",
-                    "type": "plain_text_input",
+                    "type": "multi_external_select",
                     "action_id": "slack_channels",
                     "placeholder": {
                         "type": "plain_text",
                         "text": "Enter Channel",
                         "emoji": true
-                    },
-                    "initial_value": "announcements"
+                    }, 
+                    "initial_options": [{
+                        text: {
+                            type: "plain_text",
+                            text: "#general"
+                        },
+                        value: "general"
+                    }],
+                    "min_query_length": 0
                 },
                 "label": {
                     "type": "plain_text",
                     "text": "Channel",
                     "emoji": true
-                }
+                } 
             });
             blocks.push({
                 "type": "input",
@@ -1130,18 +1080,21 @@ const modalJsonBlocks = (selected_platforms) => {
                 "type": "input",
                 "block_id": "none13",
                 "element": {
-                    "type": "plain_text_input",
-                    "action_id": "mobile_id",
+                    "type": "external_select",
+                    "action_id": "mobile_tag",
                     "placeholder": {
                         "type": "plain_text",
-                        "text": "Enter id"
-                    }
+                        "text": "Select tag",
+                        "emoji": true
+                    },
+                    "min_query_length": 0
                 },
                 "label": {
                     "type": "plain_text",
-                    "text": "ID",
+                    "text": "Tag",
                     "emoji": true
-                }
+                }, 
+                "optional": true
             });
         }
         if (selected_platforms[p].value == "mapgt") {
@@ -1175,7 +1128,7 @@ const modalJsonBlocks = (selected_platforms) => {
                         "type": "plain_text",
                         "text": "Location",
                         "emoji": true
-                    }, 
+                    },
                     "optional": true
                 }
             );

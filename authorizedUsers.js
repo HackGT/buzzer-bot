@@ -1,11 +1,11 @@
 // Lists the ids and names of users who are authorized to access the buzzer app
 let authorizedUsers = [
     {
-        "id": "UUHRA7A6Q",
+        "id": "US8UHEKPB",
         "name": "Ayush Goyal"
     },
     {
-        "id": "UUJC2NYHW",
+        "id": "UEJDQEH3R",
         "name": "Rahul Rajan"
     },
     {
@@ -13,56 +13,56 @@ let authorizedUsers = [
         "name": "Sahiti Baddula"
     },
     {
-        "id": "UU5F3H2QJ",
+        "id": "U8ZCZCV6V",
         "name": "[staff] Stephanie Almeida"
     },
     {
-        "id": "UUJ1ZCJ12",
+        "id": "UEGKXTTNC",
         "name": "Catherine Lee"
     },
     {
-        "id": "UULE735C5",
+        "id": "UEHC7EETC",
         "name": "[staff] Saachi Wadhwani"
     },
     {
-        "id": "UUHR69MCL",
+        "id": "UEH97JSMR",
         "name": "Maria Shapiro"
     },
     {
-        "id": "UUKCKQW9K",
+        "id": "U8Z9RTVRN",
         "name": "Claudia Chu"
     },
     {
-        "id": "UUCDJBTDJ",
+        "id": "U8ZT7KMSQ",
         "name": "Evan Strat"
     },
     {
-        "id": "UU5F045MG",
+        "id": "UEGKY4EAU",
         "name": "Allison Ronan"
     },
     {
-        "id": "UUKRW1LBF",
+        "id": "U8Z8UC32L",
         "name": "[staff] Mary Xu"
     },
     {
-        "id": "UUL716G8P",
+        "id": "UEH797V1S",
         "name": "Rohith Perumella"
     },
     
     {
-        "id": "UUCSDHXQ8",
+        "id": "UEHC7RR8S",
         "name": "Elton Pinto"
     },
     {
-        "id": "UUEP5QUS3",
+        "id": "UEJDQH7KR",
         "name": "Hannah Kim"
     },
     {
-        "id": "UUM2S2FPH",
+        "id": "USMBGCADC",
         "name": "Anusha Prasad"
     },
     {
-        "id": "UUL4J3WSK",
+        "id": "UEHC7JZ8A",
         "name": "Ohad Rau"
     }
 ]

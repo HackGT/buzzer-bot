@@ -8,16 +8,27 @@ const queryMessage = `query send_message($message:String!, $plugins:PluginMaster
   }
 }`;
 
+const tagsQuery = () => `
+    query {
+        tags(start: 0) {
+            name
+            slug
+        }
+    }
+`
+   
+
 const areasQuery = () => `
     query {
         areas(start: 0) {
-            id
             name
+            mapgt_slug
         }
     }
 `
 
 module.exports = {
     queryMessage, 
+    tagsQuery,
     areasQuery
 }

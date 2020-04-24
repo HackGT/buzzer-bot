@@ -8,8 +8,8 @@ const express = require('express');
 const morgan = require('morgan');
 const chalk = require('chalk');
 
-const { modalJson, homeJson, homeJsonBlocks, successJson, failureJson} = require('./views.js');
-const { queryMessage, areasQuery} = require('./queries.js');
+const { modalJson, homeJson, unauthorizedHomeJsonBlocks, homeJsonBlocks, successJson, failureJson} = require('./views.js');
+const { queryMessage, tagsQuery, areasQuery} = require('./queries.js');
 const { authorizedUsers } = require('./authorizedUsers');
 
 const web = new WebClient(process.env.SLACK_BOT_TOKEN);
@@ -20,6 +20,7 @@ const app = express();
 const PORT = 80;
 
 async function makeCMSRequest(query, variables = {}, token = "") {
+    console.log(process.env.CMS_URL)
     headers = {
         "Content-Type": `application/json`,
         Accept: `application/json`
@@ -121,17 +122,31 @@ slackInteractions.action({type: 'multi_static_select'}, async (payload) => {
     const res = await web.views.open(modalJson(payload.trigger_id, selected_platforms));
 })
 
-slackInteractions.options({ actionId: "areaSelect" }, (payload) => {
+slackInteractions.options({ actionId: 'mobile_tag' }, (payload) => {
+    console.log('Getting tags');
+
+    return getTags().catch(console.error);
+})
+
+slackInteractions.options({ actionId: 'mapgt_location' }, (payload) => {
     console.log('Getting areas');
 
     return getAreas().catch(console.error);
+})
+
+slackInteractions.options({actionId: 'slack_channels'}, (payload) => {
+    console.log('Getting channels');
+
+    return getConversations().catch(console.error);
 })
 
 slackInteractions.viewSubmission('buzzer_submit', async (payload) => {
     console.log('Buzzer notification(s) created');
     clients = getClients(payload.view.blocks);
     values = payload.view.state.values;
-    let clientSchema = generateSchema(clients, values);
+    console.log(values)
+    let clientSchema = await generateSchema(clients, values);
+    console.log(clientSchema)
     let clientSchemaJson = {}
     clientSchema.map(client => {
         let index = Object.keys(client)[0];
@@ -141,15 +156,15 @@ slackInteractions.viewSubmission('buzzer_submit', async (payload) => {
     return ret;
 })
 
-function generateSchema(clients, values) {
+async function generateSchema(clients, values) {
     schema = [];
     for (let c in clients) {
         if (clients[c] == 'live_site') {
             schema.push(
                 {
                     "live_site": {
-                        "title": values.live_site.live_site_title.value,
-                        "icon": values.none4.live_site_icon.value
+                        "title": values.live_site.live_site_title.value
+                        // "icon": values.none4.live_site_icon.value || null
                     }
                 }
             )
@@ -159,16 +174,6 @@ function generateSchema(clients, values) {
                 {
                     "twitter": {
                         "_": true
-                    }
-                }
-            )
-        }
-        else if (clients[c] == 'twilio') {
-            schema.push(
-                {
-                    "twilio": {
-                        "numbers": values.twilio.twilio_numbers.value,
-                        "groups": values.none7.twilio_groups.value
                     }
                 }
             )
@@ -188,7 +193,7 @@ function generateSchema(clients, values) {
             schema.push(
                 {
                     "slack": {
-                        "channels": values.slack.slack_channels.value.split(','),
+                        "channels": values.slack.slack_channels.selected_options,
                         "at_channel": at_channel,
                         "at_here": at_here
                     }
@@ -200,7 +205,7 @@ function generateSchema(clients, values) {
                 {
                     "f_c_m": {
                         "header": values.mobile.mobile_header.value,
-                        "id": values.none13.mobile_id.value
+                        "id": values.none13.mobile_tag.selected_option.value || null
                     }
                 }
             )
@@ -209,9 +214,9 @@ function generateSchema(clients, values) {
             schema.push(
                 {
                     "mapgt": {
-                        "area": values.mapgt.mapgt_location.value || null,
-                        "title": values.none16.mapgt_title.value || null,
-                        "time": values.none17.mapgt_time.selected_option.value || n
+                        "area": values.mapgt.mapgt_location.selected_option.value || null,
+                        "title": values.none16.mapgt_title.value,
+                        "time": values.none17.mapgt_time.selected_option.value
                     }
                 }
             )
@@ -230,6 +235,70 @@ function getClients(blocks) {
     return clients;
 }
 
+async function getConversations() {
+    const result = await web.conversations.list({
+        token: process.env.SLACK_BOT_TOKEN
+    });
+    convos = await saveChannels(result.channels);
+    console.log("Fetched channels data")
+    let options = {
+        "options": []
+    };
+    for (c of convos) {
+        options.options.push({
+            text: {
+                type: "plain_text",
+                text: "#" + c
+            },
+            value: c
+        })
+    }
+    return options;
+}
+
+async function saveChannels(conversationsArray) {
+    convos = [];
+    conversationsArray.forEach(function(conversation){
+        convos.push(conversation["name"])
+    });
+    return convos
+}
+
+async function getTags() {
+    const res = await makeCMSRequest(tagsQuery());
+
+    console.log("Fetched tags data");
+
+    let data = await res.json();
+
+    if (data.errors) {
+        console.error(data.errors);
+        return [];
+    } else if (!data.data.tags) {
+        return [];
+    }
+
+    data = data.data.tags;
+
+    let options = {
+        "options": []
+    };
+
+    for (tag of data) {
+        if (!tag.slug) {
+            continue
+        }
+        options.options.push({
+            text: {
+                type: "plain_text",
+                text: tag.name
+            },
+            value: tag.slug
+        })
+    }
+    return options;
+}
+
 async function getAreas() {
     const res = await makeCMSRequest(areasQuery());
 
@@ -246,17 +315,21 @@ async function getAreas() {
 
     data = data.data.areas;
 
+
     let options = {
         "options": []
     };
 
     for (area of data) {
+        if (!area.mapgt_slug) {
+            continue
+        }
         options.options.push({
             text: {
                 type: "plain_text",
                 text: area.name
             },
-            value: area.id
+            value: area.mapgt_slug
         })
     }
     return options;
@@ -266,7 +339,6 @@ app.use(express.urlencoded({ extended: true }));
 
 app.post('/slack/slashcommand', (req, res) => {
     console.log("slackcommand")
-    res.json({ "blocks": homeJsonBlocks() });
     if (authorizedUsers.map(user => user.id).includes(req.body.user_id)) {
         console.log("sending home block")
         res.json({ "blocks": homeJsonBlocks() });
