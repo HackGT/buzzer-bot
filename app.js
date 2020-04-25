@@ -7,7 +7,6 @@ const dateformat = require('dateformat');
 const express = require('express');
 const morgan = require('morgan');
 const chalk = require('chalk');
-
 const { modalJson, homeJson, unauthorizedHomeJsonBlocks, homeJsonBlocks, successJson, failureJson} = require('./views.js');
 const { queryMessage, tagsQuery, areasQuery} = require('./queries.js');
 const { authorizedUsers } = require('./authorizedUsers');
