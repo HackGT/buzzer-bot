@@ -58,7 +58,9 @@ async function makeRequest(message, clientSchemaJson, adminkey) {
             console.log("Buzzer Success")
             ret = successJson();
         } else {
-            console.log("Buzzer Failure")
+            console.log("My name is sahiti and my code bad")
+            console.log(res)
+            
         }
     })
     return ret;
