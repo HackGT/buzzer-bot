@@ -20,7 +20,6 @@ const app = express();
 const PORT = 80;
 
 async function makeCMSRequest(query, variables = {}, token = "") {
-    console.log(process.env.CMS_URL)
     headers = {
         "Content-Type": `application/json`,
         Accept: `application/json`
@@ -144,7 +143,6 @@ slackInteractions.viewSubmission('buzzer_submit', async (payload) => {
     console.log('Buzzer notification(s) created');
     clients = getClients(payload.view.blocks);
     values = payload.view.state.values;
-    console.log(values)
     let clientSchema = await generateSchema(clients, values);
     console.log(clientSchema)
     let clientSchemaJson = {}
@@ -314,7 +312,6 @@ async function getAreas() {
     }
 
     data = data.data.areas;
-
 
     let options = {
         "options": []
