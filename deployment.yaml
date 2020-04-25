@@ -1,0 +1,8 @@
+git:
+    remote: https://github.com/HackGT/buzzer-bot.git
+    branch: master
+
+secrets:
+    - SLACK_BOT_TOKEN
+    - SLACK_SIGNING_SECRET
+    - ADMIN_KEY_SECRET
