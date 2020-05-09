@@ -7,7 +7,6 @@ const dateformat = require('dateformat');
 const express = require('express');
 const morgan = require('morgan');
 const chalk = require('chalk');
-
 const { modalJson, homeJson, unauthorizedHomeJsonBlocks, homeJsonBlocks, successJson, failureJson} = require('./views.js');
 const { queryMessage, tagsQuery, areasQuery} = require('./queries.js');
 const { authorizedUsers } = require('./authorizedUsers');
@@ -40,12 +39,13 @@ async function makeCMSRequest(query, variables = {}, token = "") {
 
 async function makeRequest(message, clientSchemaJson, adminkey) {
     ret = failureJson()
+    encodedKey = Buffer.from(adminkey).toString("base64")
     const res = await fetch(process.env.BUZZER_URL, {
         method: 'POST',
         headers: {
             'Content-Type': `application/json`,
             'Accept'      : `application/json`,
-            'Authorization': 'Basic ' + adminkey
+            'Authorization': 'Basic ' + encodedKey
         },
         body: JSON.stringify({
             query: queryMessage,
@@ -59,7 +59,9 @@ async function makeRequest(message, clientSchemaJson, adminkey) {
             console.log("Buzzer Success")
             ret = successJson();
         } else {
-            console.log("Buzzer Failure")
+            console.log("My name is sahiti and my code bad")
+            console.log(res)
+            
         }
     })
     return ret;
@@ -70,7 +72,6 @@ String.prototype.trunc = String.prototype.trunc ||
     function (n) {
         return (this.length > n) ? this.substr(0, n - 1) + '...' : this;
     };
-
 String.prototype.capitalize = String.prototype.capitalize ||
     function () {
         return this.charAt(0).toUpperCase() + this.slice(1);
