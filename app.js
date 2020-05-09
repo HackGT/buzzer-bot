@@ -59,7 +59,7 @@ async function makeRequest(message, clientSchemaJson, adminkey) {
             console.log("Buzzer Success")
             ret = successJson();
         } else {
-            console.log("My name is sahiti and my code bad")
+            console.log("My name is rahul and im dumb")
             console.log(res)
             
         }
