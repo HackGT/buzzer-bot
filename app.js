@@ -136,7 +136,7 @@ slackInteractions.options({ actionId: 'mapgt_location' }, (payload) => {
 slackInteractions.options({actionId: 'slack_channels'}, (payload) => {
     console.log('Getting channels');
 
-    return getConversations().catch(console.error);
+    return getConversations(payload.value).catch(console.error);
 })
 
 slackInteractions.viewSubmission('buzzer_submit', async (payload) => {
@@ -233,11 +233,16 @@ function getClients(blocks) {
     return clients;
 }
 
-async function getConversations() {
+async function getConversations(query) {
     const result = await web.conversations.list({
-        token: process.env.SLACK_BOT_TOKEN
+        token: process.env.SLACK_BOT_TOKEN,
+        exclude_archived: true,
+        limit: 258
     });
     convos = await saveChannels(result.channels);
+    convos = convos.filter((event) => {
+        return event.toLowerCase().replace(/\s/g, '').includes(query.toLowerCase().replace(/\s/g, ''));
+    });
     console.log("Fetched channels data")
     let options = {
         "options": []
