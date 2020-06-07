@@ -193,7 +193,7 @@ async function generateSchema(clients, values) {
             schema.push(
                 {
                     "slack": {
-                        "channels": values.slack.slack_channels.selected_options,
+                        "channels": values.slack.slack_channels.selected_options.map(channel => channel.value),
                         "at_channel": at_channel,
                         "at_here": at_here
                     }
