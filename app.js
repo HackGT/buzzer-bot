@@ -53,14 +53,16 @@ async function makeRequest(message, clientSchemaJson, adminkey) {
                 "plugins": clientSchemaJson
             }
         })
-    }).then(res => res.json()).then(res => {
-        console.log(res)
+    }).then(res => {
         if (res.status == 200) {
             console.log("Buzzer Success")
             ret = successJson();
         } else {
             console.log("My name is rahul and im dumb")            
         }
+        return res.json()
+    }).then(res => {
+        console.log(JSON.parse(res))
     }) 
     return ret;
 }
