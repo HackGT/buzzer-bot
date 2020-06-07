@@ -62,7 +62,8 @@ async function makeRequest(message, clientSchemaJson, adminkey) {
         }
         return res.json()
     }).then(res => {
-        console.log(JSON.parse(res))
+        console.log("response received")
+        console.log(JSON.stringify(res))
     }) 
     return ret;
 }
