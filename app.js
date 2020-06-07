@@ -57,7 +57,7 @@ async function makeRequest(message, clientSchemaJson, adminkey) {
         if (res.status == 200) {
             console.log("Buzzer Success")
             ret = successJson();
-            consoole.log(res)
+            console.log(res)
         } else {
             console.log("My name is rahul and im dumb")
             console.log(res)
