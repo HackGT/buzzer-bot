@@ -146,7 +146,7 @@ slackInteractions.viewSubmission('buzzer_submit', async (payload) => {
     clients = getClients(payload.view.blocks);
     values = payload.view.state.values;
     let clientSchema = await generateSchema(clients, values);
-    console.log(clientSchema)
+    console.log(JSON.stringify(clientSchema))
     let clientSchemaJson = {}
     clientSchema.map(client => {
         let index = Object.keys(client)[0];
