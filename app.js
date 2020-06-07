@@ -143,8 +143,8 @@ slackInteractions.options({actionId: 'slack_channels'}, (payload) => {
 
 slackInteractions.viewSubmission('buzzer_submit', async (payload) => {
     console.log('Buzzer notification(s) created');
-    clients = getClients(payload.view.blocks);
-    values = payload.view.state.values;
+    let clients = getClients(payload.view.blocks);
+    let values = payload.view.state.values;
     values = [...new Set(values)];
     let clientSchema = await generateSchema(clients, values);
     console.log(JSON.stringify(clientSchema))
