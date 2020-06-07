@@ -39,13 +39,12 @@ async function makeCMSRequest(query, variables = {}, token = "") {
 
 async function makeRequest(message, clientSchemaJson, adminkey) {
     ret = failureJson()
-    encodedKey = Buffer.from(adminkey).toString("base64")
     const res = await fetch(process.env.BUZZER_URL, {
         method: 'POST',
         headers: {
             'Content-Type': `application/json`,
             'Accept'      : `application/json`,
-            'Authorization': 'Basic ' + encodedKey
+            'Authorization': 'Basic ' + adminkey
         },
         body: JSON.stringify({
             query: queryMessage,
