@@ -64,6 +64,10 @@ let authorizedUsers = [
     {
         "id": "UEHC7JZ8A",
         "name": "Ohad Rau"
+    },
+    {
+        "id": "UEH9933SP",
+        "name": "Nicholas Grana"
     }
 ]
 
